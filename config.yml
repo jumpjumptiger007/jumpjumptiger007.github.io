@@ -9,7 +9,7 @@ taxonomies:
     tag: tags
 
 params:
-    description: "I am a Professor of Philology at the Institute of Romance Philology in Regensburg, Germany. My research focuses mostly on Portuguese irregular verbs."
+    description: ""
     author: Yiqiang Adrian Liu
     # googleAnalyticsID: "G-XXXXX"
     DateFormat: "January 2006"
@@ -35,7 +35,7 @@ params:
     profileMode:
           enabled: true
           title: Yiqiang Adrian Liu
-          subtitle: ""
+          subtitle: "I am a computer engineer with expertise in software development, computational methods, and data-driven problem-solving. With a strong foundation in programming and system design, I specialize in building scalable digital solutions and optimizing workflows through efficient code. Passionate about technology and innovation, I leverage my knowledge to create impactful engineering solutions. Fluent in multiple languages, I enjoy collaborating in global environments to drive technical excellence."
           imageUrl: "picture.jpeg"
           imageWidth: 160
           imageHeight: 160
