@@ -44,7 +44,7 @@ params:
         - name: CV
           url: cv.pdf
         - name: Email
-          url: mailto:adrian@yliu.tech
+          url: mailto:contact@yliu.tech
         - name: GitHub
           url: https://github.com/jumpjumptiger007
         - name: LinkedIn
