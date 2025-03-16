@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Password Generator</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f7f9fc;
+            color: #333;
+        }
+        .container {
+            background-color: white;
+            border-radius: 8px;
+            padding: 25px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            color: #2c3e50;
+            margin-top: 0;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+        }
+        .checkbox-group label {
+            display: inline-flex;
+            align-items: center;
+            margin-right: 15px;
+            cursor: pointer;
+            font-weight: normal;
+        }
+        input[type="number"] {
+            width: 60px;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        input[type="checkbox"] {
+            margin-right: 5px;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .password-output {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #f1f1f1;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 18px;
+            word-break: break-all;
+            position: relative;
+        }
+        .copy-button {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            background-color: #2c3e50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 5px 10px;
+            font-size: 12px;
+            cursor: pointer;
+        }
+        .copy-button:hover {
+            background-color: #34495e;
+        }
+        .strength-meter {
+            margin-top: 10px;
+            height: 5px;
+            background-color: #e0e0e0;
+            border-radius: 3px;
+            overflow: hidden;
+        }
+        .strength-meter-fill {
+            height: 100%;
+            border-radius: 3px;
+            transition: width 0.3s ease;
+        }
+        .very-weak { background-color: #ff4d4d; }
+        .weak { background-color: #ffa64d; }
+        .moderate { background-color: #ffff4d; }
+        .strong { background-color: #4dff4d; }
+        .very-strong { background-color: #1a8cff; }
+        .strength-text {
+            margin-top: 5px;
+            font-size: 14px;
+            color: #666;
+        }
+        .saved-passwords {
+            margin-top: 25px;
+        }
+        .saved-password-item {
+            background-color: #f1f1f1;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 4px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .saved-password-text {
+            font-family: monospace;
+            word-break: break-all;
+        }
+        .delete-btn {
+            background-color: #ff4d4d;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 5px 10px;
+            font-size: 12px;
+            cursor: pointer;
+        }
+        .delete-btn:hover {
+            background-color: #ff3333;
+        }
+        .history-title {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .clear-all-btn {
+            background-color: #ff4d4d;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 5px 10px;
+            font-size: 12px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Password Generator</h1>
+        
+        <div class="form-group">
+            <label for="passwordLength">Password Length:</label>
+            <input type="number" id="passwordLength" min="4" max="100" value="16">
+        </div>
+        
+        <div class="form-group">
+            <label>Include:</label>
+            <div class="checkbox-group">
+                <label>
+                    <input type="checkbox" id="includeUppercase" checked>
+                    Uppercase (A-Z)
+                </label>
+                <label>
+                    <input type="checkbox" id="includeLowercase" checked>
+                    Lowercase (a-z)
+                </label>
+                <label>
+                    <input type="checkbox" id="includeNumbers" checked>
+                    Numbers (0-9)
+                </label>
+                <label>
+                    <input type="checkbox" id="includeSymbols" checked>
+                    Symbols (!@#$%^&*)
+                </label>
+            </div>
+        </div>
+        
+        <div class="form-group">
+            <label>Options:</label>
+            <div class="checkbox-group">
+                <label>
+                    <input type="checkbox" id="excludeSimilar">
+                    Exclude Similar Characters (i, l, 1, o, 0)
+                </label>
+                <label>
+                    <input type="checkbox" id="excludeAmbiguous">
+                    Exclude Ambiguous Characters ({}, [], etc.)
+                </label>
+            </div>
+        </div>
+        
+        <button id="generateButton">Generate Password</button>
+        
+        <div class="password-output" id="passwordOutput">
+            Click "Generate Password" to create a password
+            <button class="copy-button" id="copyButton">Copy</button>
+        </div>
+        
+        <div class="strength-meter">
+            <div class="strength-meter-fill" id="strengthMeterFill"></div>
+        </div>
+        <div class="strength-text" id="strengthText">Password Strength</div>
+        
+        <div class="saved-passwords">
+            <div class="history-title">
+                <h3>Password History</h3>
+                <button class="clear-all-btn" id="clearAllButton">Clear All</button>
+            </div>
+            <div id="savedPasswordsList"></div>
+        </div>
+    </div>
+
+    <script>
+        // Wait for the DOM to be fully loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            // Get all the necessary DOM elements
+            const generateButton = document.getElementById('generateButton');
+            const passwordLengthInput = document.getElementById('passwordLength');
+            const includeUppercaseCheckbox = document.getElementById('includeUppercase');
+            const includeLowercaseCheckbox = document.getElementById('includeLowercase');
+            const includeNumbersCheckbox = document.getElementById('includeNumbers');
+            const includeSymbolsCheckbox = document.getElementById('includeSymbols');
+            const excludeSimilarCheckbox = document.getElementById('excludeSimilar');
+            const excludeAmbiguousCheckbox = document.getElementById('excludeAmbiguous');
+            const passwordOutput = document.getElementById('passwordOutput');
+            const copyButton = document.getElementById('copyButton');
+            const strengthMeterFill = document.getElementById('strengthMeterFill');
+            const strengthText = document.getElementById('strengthText');
+            const savedPasswordsList = document.getElementById('savedPasswordsList');
+            const clearAllButton = document.getElementById('clearAllButton');
+            
+            // Load saved passwords from localStorage
+            let savedPasswords = [];
+            try {
+                const savedPasswordsJson = localStorage.getItem('savedPasswords');
+                if (savedPasswordsJson) {
+                    savedPasswords = JSON.parse(savedPasswordsJson);
+                }
+            } catch (e) {
+                console.error('Error loading saved passwords:', e);
+                savedPasswords = [];
+            }
+            
+            renderSavedPasswords();
+            
+            // Generate password when button is clicked
+            generateButton.addEventListener('click', function() {
+                // Get all the user preferences
+                const length = parseInt(passwordLengthInput.value) || 16;
+                const useUppercase = includeUppercaseCheckbox.checked;
+                const useLowercase = includeLowercaseCheckbox.checked;
+                const useNumbers = includeNumbersCheckbox.checked;
+                const useSymbols = includeSymbolsCheckbox.checked;
+                const excludeSimilar = excludeSimilarCheckbox.checked;
+                const excludeAmbiguous = excludeAmbiguousCheckbox.checked;
+                
+                // Validate that at least one character set is selected
+                if (!useUppercase && !useLowercase && !useNumbers && !useSymbols) {
+                    alert('Please select at least one character type.');
+                    return;
+                }
+                
+                // Generate the password
+                const password = generatePassword({
+                    length,
+                    useUppercase,
+                    useLowercase,
+                    useNumbers,
+                    useSymbols,
+                    excludeSimilar,
+                    excludeAmbiguous
+                });
+                
+                // Display the password
+                passwordOutput.textContent = password;
+                passwordOutput.appendChild(copyButton);
+                
+                // Calculate and display strength
+                const strength = calculatePasswordStrength(password);
+                updateStrengthMeter(strength);
+                
+                // Save password to history
+                savedPasswords.unshift({
+                    password,
+                    timestamp: Date.now()
+                });
+                
+                // Limit to 10 saved passwords
+                if (savedPasswords.length > 10) {
+                    savedPasswords = savedPasswords.slice(0, 10);
+                }
+                
+                // Save to localStorage
+                try {
+                    localStorage.setItem('savedPasswords', JSON.stringify(savedPasswords));
+                } catch (e) {
+                    console.error('Error saving passwords:', e);
+                }
+                
+                renderSavedPasswords();
+            });
+            
+            // Copy password to clipboard
+            copyButton.addEventListener('click', function(e) {
+                e.stopPropagation();
+                
+                const password = passwordOutput.textContent.trim();
+                if (password === 'Click "Generate Password" to create a password') {
+                    return;
+                }
+                
+                // Use the Clipboard API to copy the password
+                navigator.clipboard.writeText(password)
+                    .then(function() {
+                        const originalText = copyButton.textContent;
+                        copyButton.textContent = 'Copied!';
+                        setTimeout(function() {
+                            copyButton.textContent = originalText;
+                        }, 2000);
+                    })
+                    .catch(function(err) {
+                        console.error('Failed to copy: ', err);
+                        alert('Failed to copy password to clipboard');
+                    });
+            });
+            
+            // Clear all saved passwords
+            clearAllButton.addEventListener('click', function() {
+                if (confirm('Are you sure you want to clear all saved passwords?')) {
+                    savedPasswords = [];
+                    try {
+                        localStorage.setItem('savedPasswords', JSON.stringify(savedPasswords));
+                    } catch (e) {
+                        console.error('Error clearing passwords:', e);
+                    }
+                    renderSavedPasswords();
+                }
+            });
+            
+            // Generate password function
+            function generatePassword(options) {
+                // Define character sets
+                const lowercaseChars = 'abcdefghijklmnopqrstuvwxyz';
+                const uppercaseChars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+                const numberChars = '0123456789';
+                const symbolChars = '!@#$%^&*()-_=+[]{}|;:,.<>?/';
+                
+                // Define characters to exclude
+                const similarChars = 'il1Lo0O';
+                const ambiguousChars = '{}[]()/\\\'"`~,;:.<>';
+                
+                // Build the allowed characters set
+                let allowedChars = '';
+                
+                if (options.useLowercase) {
+                    if (options.excludeSimilar) {
+                        allowedChars += lowercaseChars.replace(/[ilo]/g, '');
+                    } else {
+                        allowedChars += lowercaseChars;
+                    }
+                }
+                
+                if (options.useUppercase) {
+                    if (options.excludeSimilar) {
+                        allowedChars += uppercaseChars.replace(/[LO]/g, '');
+                    } else {
+                        allowedChars += uppercaseChars;
+                    }
+                }
+                
+                if (options.useNumbers) {
+                    if (options.excludeSimilar) {
+                        allowedChars += numberChars.replace(/[10]/g, '');
+                    } else {
+                        allowedChars += numberChars;
+                    }
+                }
+                
+                if (options.useSymbols) {
+                    let chars = symbolChars;
+                    if (options.excludeAmbiguous) {
+                        // Remove each ambiguous character
+                        for (const char of ambiguousChars) {
+                            chars = chars.replace(new RegExp('\\' + char, 'g'), '');
+                        }
+                    }
+                    allowedChars += chars;
+                }
+                
+                // Check if we have any allowed characters
+                if (!allowedChars.length) {
+                    alert('No characters available with the selected options.');
+                    return '';
+                }
+                
+                // Generate the password
+                let password = '';
+                let allTypesIncluded = false;
+                
+                // Keep generating until we have included at least one character from each selected set
+                while (!allTypesIncluded) {
+                    password = '';
+                    let hasLower = !options.useLowercase;
+                    let hasUpper = !options.useUppercase;
+                    let hasNumber = !options.useNumbers;
+                    let hasSymbol = !options.useSymbols;
+                    
+                    for (let i = 0; i < options.length; i++) {
+                        const randomIndex = Math.floor(Math.random() * allowedChars.length);
+                        const char = allowedChars[randomIndex];
+                        password += char;
+                        
+                        // Check which character type was added
+                        if (options.useLowercase && lowercaseChars.includes(char)) hasLower = true;
+                        if (options.useUppercase && uppercaseChars.includes(char)) hasUpper = true;
+                        if (options.useNumbers && numberChars.includes(char)) hasNumber = true;
+                        if (options.useSymbols && symbolChars.includes(char)) hasSymbol = true;
+                    }
+                    
+                    allTypesIncluded = hasLower && hasUpper && hasNumber && hasSymbol;
+                }
+                
+                return password;
+            }
+            
+            // Calculate password strength
+            function calculatePasswordStrength(password) {
+                let score = 0;
+                
+                // Length score (up to 10 points)
+                score += Math.min(10, password.length / 2);
+                
+                // Character type score (up to 10 points)
+                const hasLower = /[a-z]/.test(password);
+                const hasUpper = /[A-Z]/.test(password);
+                const hasNumber = /[0-9]/.test(password);
+                const hasSymbol = /[^a-zA-Z0-9]/.test(password);
+                
+                const charTypesCount = [hasLower, hasUpper, hasNumber, hasSymbol].filter(Boolean).length;
+                score += charTypesCount * 2.5;
+                
+                // Entropy calculation
+                let poolSize = 0;
+                if (hasLower) poolSize += 26;
+                if (hasUpper) poolSize += 26;
+                if (hasNumber) poolSize += 10;
+                if (hasSymbol) poolSize += 33; // Approximate for most common special characters
+                
+                // Calculate entropy in bits
+                const entropy = Math.log2(Math.pow(poolSize, password.length));
+                
+                // Return a description based on the entropy
+                if (entropy < 28) return { score: 1, strength: 'Very Weak', entropy };
+                if (entropy < 36) return { score: 2, strength: 'Weak', entropy };
+                if (entropy < 60) return { score: 3, strength: 'Moderate', entropy };
+                if (entropy < 128) return { score: 4, strength: 'Strong', entropy };
+                return { score: 5, strength: 'Very Strong', entropy };
+            }
+            
+            // Update strength meter display
+            function updateStrengthMeter(strength) {
+                const percentage = (strength.score / 5) * 100;
+                strengthMeterFill.style.width = `${percentage}%`;
+                
+                // Remove all classes
+                strengthMeterFill.classList.remove('very-weak', 'weak', 'moderate', 'strong', 'very-strong');
+                
+                // Add appropriate class based on strength
+                switch (strength.score) {
+                    case 1:
+                        strengthMeterFill.classList.add('very-weak');
+                        break;
+                    case 2:
+                        strengthMeterFill.classList.add('weak');
+                        break;
+                    case 3:
+                        strengthMeterFill.classList.add('moderate');
+                        break;
+                    case 4:
+                        strengthMeterFill.classList.add('strong');
+                        break;
+                    case 5:
+                        strengthMeterFill.classList.add('very-strong');
+                        break;
+                }
+                
+                strengthText.textContent = `Password Strength: ${strength.strength} (Entropy: ${Math.round(strength.entropy)} bits)`;
+            }
+            
+            // Render saved passwords list
+            function renderSavedPasswords() {
+                savedPasswordsList.innerHTML = '';
+                
+                if (savedPasswords.length === 0) {
+                    savedPasswordsList.innerHTML = '<p>No saved passwords yet.</p>';
+                    return;
+                }
+                
+                savedPasswords.forEach((item, index) => {
+                    const passwordItem = document.createElement('div');
+                    passwordItem.className = 'saved-password-item';
+                    
+                    const passwordText = document.createElement('div');
+                    passwordText.className = 'saved-password-text';
+                    passwordText.textContent = item.password;
+                    
+                    const deleteBtn = document.createElement('button');
+                    deleteBtn.className = 'delete-btn';
+                    deleteBtn.textContent = 'Delete';
+                    deleteBtn.addEventListener('click', function() {
+                        savedPasswords.splice(index, 1);
+                        try {
+                            localStorage.setItem('savedPasswords', JSON.stringify(savedPasswords));
+                        } catch (e) {
+                            console.error('Error removing password:', e);
+                        }
+                        renderSavedPasswords();
+                    });
+                    
+                    passwordItem.appendChild(passwordText);
+                    passwordItem.appendChild(deleteBtn);
+                    savedPasswordsList.appendChild(passwordItem);
+                });
+            }
+        });
+    </script>
+</body>
+</html>
