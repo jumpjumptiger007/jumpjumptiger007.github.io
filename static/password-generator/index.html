@@ -60,29 +60,36 @@
         button:hover {
             background-color: #45a049;
         }
-        .password-output {
+        .password-area {
+            display: flex;
+            align-items: center;
+            gap: 10px;
             margin-top: 20px;
+        }
+        .password-display {
+            flex-grow: 1;
             padding: 15px;
             background-color: #f1f1f1;
             border-radius: 4px;
             font-family: monospace;
             font-size: 18px;
             word-break: break-all;
-            position: relative;
+            min-height: 25px;
         }
-        .copy-button {
-            position: absolute;
-            top: 8px;
-            right: 8px;
+        .placeholder {
+            opacity: 0.7;
+        }
+        #copy-btn {
             background-color: #2c3e50;
             color: white;
             border: none;
             border-radius: 4px;
-            padding: 5px 10px;
-            font-size: 12px;
+            padding: 8px 15px;
+            font-size: 14px;
             cursor: pointer;
+            height: fit-content;
         }
-        .copy-button:hover {
+        #copy-btn:hover {
             background-color: #34495e;
         }
         .strength-meter {
@@ -156,27 +163,27 @@
         <h1>Password Generator</h1>
         
         <div class="form-group">
-            <label for="passwordLength">Password Length:</label>
-            <input type="number" id="passwordLength" min="4" max="100" value="16">
+            <label for="length">Password Length:</label>
+            <input type="number" id="length" min="4" max="100" value="16">
         </div>
         
         <div class="form-group">
             <label>Include:</label>
             <div class="checkbox-group">
                 <label>
-                    <input type="checkbox" id="includeUppercase" checked>
+                    <input type="checkbox" id="uppercase" checked>
                     Uppercase (A-Z)
                 </label>
                 <label>
-                    <input type="checkbox" id="includeLowercase" checked>
+                    <input type="checkbox" id="lowercase" checked>
                     Lowercase (a-z)
                 </label>
                 <label>
-                    <input type="checkbox" id="includeNumbers" checked>
+                    <input type="checkbox" id="numbers" checked>
                     Numbers (0-9)
                 </label>
                 <label>
-                    <input type="checkbox" id="includeSymbols" checked>
+                    <input type="checkbox" id="symbols" checked>
                     Symbols (!@#$%^&*)
                 </label>
             </div>
@@ -186,88 +193,79 @@
             <label>Options:</label>
             <div class="checkbox-group">
                 <label>
-                    <input type="checkbox" id="excludeSimilar">
+                    <input type="checkbox" id="exclude-similar">
                     Exclude Similar Characters (i, l, 1, o, 0)
                 </label>
                 <label>
-                    <input type="checkbox" id="excludeAmbiguous">
+                    <input type="checkbox" id="exclude-ambiguous">
                     Exclude Ambiguous Characters ({}, [], etc.)
                 </label>
             </div>
         </div>
         
-        <button id="generateButton">Generate Password</button>
+        <button id="generate-btn">Generate Password</button>
         
-        <div class="password-output" id="passwordOutput">
-            Click "Generate Password" to create a password
-            <button class="copy-button" id="copyButton">Copy</button>
+        <div class="password-area">
+            <div class="password-display" id="password-display">
+                <span class="placeholder">Your password will appear here</span>
+            </div>
+            <button id="copy-btn">Copy</button>
         </div>
         
-        <div class="strength-meter">
-            <div class="strength-meter-fill" id="strengthMeterFill"></div>
+        <div id="strength-container" style="display: none;">
+            <div class="strength-meter">
+                <div class="strength-meter-fill" id="strength-meter-fill"></div>
+            </div>
+            <div class="strength-text" id="strength-text">Password Strength</div>
         </div>
-        <div class="strength-text" id="strengthText">Password Strength</div>
         
         <div class="saved-passwords">
             <div class="history-title">
                 <h3>Password History</h3>
-                <button class="clear-all-btn" id="clearAllButton">Clear All</button>
+                <button class="clear-all-btn" id="clear-all-btn">Clear All</button>
             </div>
-            <div id="savedPasswordsList"></div>
+            <div id="saved-passwords-list"></div>
         </div>
     </div>
 
     <script>
-        // Wait for the DOM to be fully loaded
         document.addEventListener('DOMContentLoaded', function() {
-            // Get all the necessary DOM elements
-            const generateButton = document.getElementById('generateButton');
-            const passwordLengthInput = document.getElementById('passwordLength');
-            const includeUppercaseCheckbox = document.getElementById('includeUppercase');
-            const includeLowercaseCheckbox = document.getElementById('includeLowercase');
-            const includeNumbersCheckbox = document.getElementById('includeNumbers');
-            const includeSymbolsCheckbox = document.getElementById('includeSymbols');
-            const excludeSimilarCheckbox = document.getElementById('excludeSimilar');
-            const excludeAmbiguousCheckbox = document.getElementById('excludeAmbiguous');
-            const passwordOutput = document.getElementById('passwordOutput');
-            const copyButton = document.getElementById('copyButton');
-            const strengthMeterFill = document.getElementById('strengthMeterFill');
-            const strengthText = document.getElementById('strengthText');
-            const savedPasswordsList = document.getElementById('savedPasswordsList');
-            const clearAllButton = document.getElementById('clearAllButton');
+            // Get DOM elements
+            const generateBtn = document.getElementById('generate-btn');
+            const lengthInput = document.getElementById('length');
+            const uppercaseCheckbox = document.getElementById('uppercase');
+            const lowercaseCheckbox = document.getElementById('lowercase');
+            const numbersCheckbox = document.getElementById('numbers');
+            const symbolsCheckbox = document.getElementById('symbols');
+            const excludeSimilarCheckbox = document.getElementById('exclude-similar');
+            const excludeAmbiguousCheckbox = document.getElementById('exclude-ambiguous');
+            const passwordDisplay = document.getElementById('password-display');
+            const copyBtn = document.getElementById('copy-btn');
+            const strengthMeterFill = document.getElementById('strength-meter-fill');
+            const strengthText = document.getElementById('strength-text');
+            const savedPasswordsList = document.getElementById('saved-passwords-list');
+            const clearAllBtn = document.getElementById('clear-all-btn');
             
             // Load saved passwords from localStorage
-            let savedPasswords = [];
-            try {
-                const savedPasswordsJson = localStorage.getItem('savedPasswords');
-                if (savedPasswordsJson) {
-                    savedPasswords = JSON.parse(savedPasswordsJson);
-                }
-            } catch (e) {
-                console.error('Error loading saved passwords:', e);
-                savedPasswords = [];
-            }
-            
+            let savedPasswords = JSON.parse(localStorage.getItem('savedPasswords')) || [];
             renderSavedPasswords();
             
-            // Generate password when button is clicked
-            generateButton.addEventListener('click', function() {
-                // Get all the user preferences
-                const length = parseInt(passwordLengthInput.value) || 16;
-                const useUppercase = includeUppercaseCheckbox.checked;
-                const useLowercase = includeLowercaseCheckbox.checked;
-                const useNumbers = includeNumbersCheckbox.checked;
-                const useSymbols = includeSymbolsCheckbox.checked;
+            // Generate a password
+            generateBtn.addEventListener('click', function() {
+                const length = parseInt(lengthInput.value);
+                const useUppercase = uppercaseCheckbox.checked;
+                const useLowercase = lowercaseCheckbox.checked;
+                const useNumbers = numbersCheckbox.checked;
+                const useSymbols = symbolsCheckbox.checked;
                 const excludeSimilar = excludeSimilarCheckbox.checked;
                 const excludeAmbiguous = excludeAmbiguousCheckbox.checked;
                 
-                // Validate that at least one character set is selected
+                // Validate options
                 if (!useUppercase && !useLowercase && !useNumbers && !useSymbols) {
                     alert('Please select at least one character type.');
                     return;
                 }
                 
-                // Generate the password
                 const password = generatePassword({
                     length,
                     useUppercase,
@@ -278,12 +276,13 @@
                     excludeAmbiguous
                 });
                 
-                // Display the password
-                passwordOutput.textContent = password;
-                passwordOutput.appendChild(copyButton);
+                // Clear the password display and show the new password
+                passwordDisplay.innerHTML = '';
+                passwordDisplay.textContent = password;
                 
-                // Calculate and display strength
+                // Calculate strength and show strength meter
                 const strength = calculatePasswordStrength(password);
+                document.getElementById('strength-container').style.display = 'block';
                 updateStrengthMeter(strength);
                 
                 // Save password to history
@@ -297,107 +296,84 @@
                     savedPasswords = savedPasswords.slice(0, 10);
                 }
                 
-                // Save to localStorage
-                try {
-                    localStorage.setItem('savedPasswords', JSON.stringify(savedPasswords));
-                } catch (e) {
-                    console.error('Error saving passwords:', e);
-                }
-                
+                localStorage.setItem('savedPasswords', JSON.stringify(savedPasswords));
                 renderSavedPasswords();
             });
             
             // Copy password to clipboard
-            copyButton.addEventListener('click', function(e) {
-                e.stopPropagation();
+            copyBtn.addEventListener('click', function() {
+                const password = passwordDisplay.textContent.trim();
                 
-                const password = passwordOutput.textContent.trim();
-                if (password === 'Click "Generate Password" to create a password') {
+                if (password === 'Your password will appear here') {
                     return;
                 }
                 
-                // Use the Clipboard API to copy the password
-                navigator.clipboard.writeText(password)
-                    .then(function() {
-                        const originalText = copyButton.textContent;
-                        copyButton.textContent = 'Copied!';
-                        setTimeout(function() {
-                            copyButton.textContent = originalText;
-                        }, 2000);
-                    })
-                    .catch(function(err) {
-                        console.error('Failed to copy: ', err);
-                        alert('Failed to copy password to clipboard');
-                    });
+                navigator.clipboard.writeText(password).then(function() {
+                    const originalText = copyBtn.textContent;
+                    copyBtn.textContent = 'Copied!';
+                    setTimeout(function() {
+                        copyBtn.textContent = originalText;
+                    }, 2000);
+                }, function() {
+                    alert('Failed to copy password to clipboard');
+                });
             });
             
             // Clear all saved passwords
-            clearAllButton.addEventListener('click', function() {
+            clearAllBtn.addEventListener('click', function() {
                 if (confirm('Are you sure you want to clear all saved passwords?')) {
+                    // Clear saved passwords
                     savedPasswords = [];
-                    try {
-                        localStorage.setItem('savedPasswords', JSON.stringify(savedPasswords));
-                    } catch (e) {
-                        console.error('Error clearing passwords:', e);
-                    }
+                    localStorage.setItem('savedPasswords', JSON.stringify(savedPasswords));
                     renderSavedPasswords();
+                    
+                    // Clear current password display
+                    passwordDisplay.innerHTML = '<span class="placeholder">Your password will appear here</span>';
+                    
+                    // Hide strength meter
+                    document.getElementById('strength-container').style.display = 'none';
                 }
             });
             
             // Generate password function
             function generatePassword(options) {
-                // Define character sets
                 const lowercaseChars = 'abcdefghijklmnopqrstuvwxyz';
                 const uppercaseChars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
                 const numberChars = '0123456789';
                 const symbolChars = '!@#$%^&*()-_=+[]{}|;:,.<>?/';
                 
-                // Define characters to exclude
+                // Remove similar looking characters if requested
                 const similarChars = 'il1Lo0O';
                 const ambiguousChars = '{}[]()/\\\'"`~,;:.<>';
                 
-                // Build the allowed characters set
                 let allowedChars = '';
                 
                 if (options.useLowercase) {
-                    if (options.excludeSimilar) {
-                        allowedChars += lowercaseChars.replace(/[ilo]/g, '');
-                    } else {
-                        allowedChars += lowercaseChars;
-                    }
+                    allowedChars += options.excludeSimilar 
+                        ? lowercaseChars.replace(/[ilo]/g, '') 
+                        : lowercaseChars;
                 }
                 
                 if (options.useUppercase) {
-                    if (options.excludeSimilar) {
-                        allowedChars += uppercaseChars.replace(/[LO]/g, '');
-                    } else {
-                        allowedChars += uppercaseChars;
-                    }
+                    allowedChars += options.excludeSimilar 
+                        ? uppercaseChars.replace(/[LO]/g, '') 
+                        : uppercaseChars;
                 }
                 
                 if (options.useNumbers) {
-                    if (options.excludeSimilar) {
-                        allowedChars += numberChars.replace(/[10]/g, '');
-                    } else {
-                        allowedChars += numberChars;
-                    }
+                    allowedChars += options.excludeSimilar 
+                        ? numberChars.replace(/[10]/g, '') 
+                        : numberChars;
                 }
                 
                 if (options.useSymbols) {
                     let chars = symbolChars;
                     if (options.excludeAmbiguous) {
-                        // Remove each ambiguous character
                         for (const char of ambiguousChars) {
-                            chars = chars.replace(new RegExp('\\' + char, 'g'), '');
+                            chars = chars.replace(char, '');
                         }
                     }
                     allowedChars += chars;
-                }
-                
-                // Check if we have any allowed characters
-                if (!allowedChars.length) {
-                    alert('No characters available with the selected options.');
-                    return '';
                 }
                 
                 // Generate the password
@@ -434,10 +410,10 @@
             function calculatePasswordStrength(password) {
                 let score = 0;
                 
-                // Length score (up to 10 points)
+                // Length score
                 score += Math.min(10, password.length / 2);
                 
-                // Character type score (up to 10 points)
+                // Character type score
                 const hasLower = /[a-z]/.test(password);
                 const hasUpper = /[A-Z]/.test(password);
                 const hasNumber = /[0-9]/.test(password);
@@ -446,14 +422,17 @@
                 const charTypesCount = [hasLower, hasUpper, hasNumber, hasSymbol].filter(Boolean).length;
                 score += charTypesCount * 2.5;
                 
-                // Entropy calculation
+                // Entropy and complexity
+                const uniqueChars = new Set(password.split('')).size;
+                score += (uniqueChars / password.length) * 10;
+                
+                // Calculate entropy bits
                 let poolSize = 0;
                 if (hasLower) poolSize += 26;
                 if (hasUpper) poolSize += 26;
                 if (hasNumber) poolSize += 10;
                 if (hasSymbol) poolSize += 33; // Approximate for most common special characters
                 
-                // Calculate entropy in bits
                 const entropy = Math.log2(Math.pow(poolSize, password.length));
                 
                 // Return a description based on the entropy
@@ -464,7 +443,7 @@
                 return { score: 5, strength: 'Very Strong', entropy };
             }
             
-            // Update strength meter display
+            // Update strength meter
             function updateStrengthMeter(strength) {
                 const percentage = (strength.score / 5) * 100;
                 strengthMeterFill.style.width = `${percentage}%`;
@@ -472,7 +451,7 @@
                 // Remove all classes
                 strengthMeterFill.classList.remove('very-weak', 'weak', 'moderate', 'strong', 'very-strong');
                 
-                // Add appropriate class based on strength
+                // Add appropriate class
                 switch (strength.score) {
                     case 1:
                         strengthMeterFill.classList.add('very-weak');
@@ -491,10 +470,10 @@
                         break;
                 }
                 
-                strengthText.textContent = `Password Strength: ${strength.strength} (Entropy: ${Math.round(strength.entropy)} bits)`;
+                strengthText.textContent = `Password Strength: ${strength.strength}`;
             }
             
-            // Render saved passwords list
+            // Render saved passwords
             function renderSavedPasswords() {
                 savedPasswordsList.innerHTML = '';
                 
@@ -516,11 +495,7 @@
                     deleteBtn.textContent = 'Delete';
                     deleteBtn.addEventListener('click', function() {
                         savedPasswords.splice(index, 1);
-                        try {
-                            localStorage.setItem('savedPasswords', JSON.stringify(savedPasswords));
-                        } catch (e) {
-                            console.error('Error removing password:', e);
-                        }
+                        localStorage.setItem('savedPasswords', JSON.stringify(savedPasswords));
                         renderSavedPasswords();
                     });
                     
