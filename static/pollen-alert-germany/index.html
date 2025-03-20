@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Pollen Alert Germany</title>
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            margin: 0; 
+            padding: 20px; 
+            color: #333; 
+            background-color: #f5f5f5; 
+        }
+        .container { 
+            max-width: 600px; 
+            margin: 0 auto; 
+            background: white; 
+            padding: 20px; 
+            border-radius: 5px; 
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1); 
+        }
+        .header { 
+            background-color: #3498db; 
+            color: white; 
+            padding: 15px; 
+            border-radius: 5px 5px 0 0; 
+            margin: -20px -20px 20px; 
+        }
+        .header h1 { 
+            color: white; 
+            margin: 0; 
+            font-size: 1.5em; 
+        }
+        table { 
+            border-collapse: collapse; 
+            width: 100%; 
+            margin: 20px 0; 
+            background-color: white; 
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1); 
+        }
+        th, td { 
+            border: 1px solid #ddd; 
+            padding: 12px; 
+            text-align: left; 
+        }
+        th { 
+            background-color: #f2f2f2; 
+            font-weight: bold; 
+            color: #2c3e50; 
+        }
+        tr:nth-child(even) { 
+            background-color: #f9f9f9; 
+        }
+        .high { 
+            color: #e74c3c; 
+            font-weight: bold; 
+        }
+        .medium { 
+            color: #f39c12; 
+        }
+        .low { 
+            color: #27ae60; 
+        }
+        .none { 
+            color: #7f8c8d; 
+        }
+        .footer { 
+            margin-top: 30px; 
+            font-size: 0.8em; 
+            color: #7f8c8d; 
+            border-top: 1px solid #eee; 
+            padding-top: 15px; 
+            text-align: center; 
+        }
+        .date { 
+            color: #7f8c8d; 
+            font-size: 0.9em; 
+            margin-bottom: 20px; 
+        }
+        .language-section {
+            border-top: 2px solid #3498db;
+            margin-top: 30px;
+            padding-top: 20px;
+        }
+        .main-title {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 30px;
+        }
+        .page-footer {
+            margin-top: 12px;
+            text-align: center;
+            color: #6b7280;
+            font-size: 0.875rem;
+            padding: 20px 0;
+            border-top: 1px solid #e5e7eb;
+        }
+        .page-footer a {
+            color: #3b82f6;
+            text-decoration: none;
+        }
+        .page-footer a:hover {
+            text-decoration: underline;
+        }
+        .project-description {
+            text-align: center;
+            max-width: 800px;
+            margin: 0 auto 20px;
+            padding: 15px;
+            background-color: #f0f4f8;
+            border-radius: 5px;
+            color: #2c3e50;
+        }
+        .github-button {
+            display: inline-block;
+            background-color: #3498db;
+            color: white;
+            padding: 10px 20px;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: bold;
+            margin-top: 10px;
+            transition: background-color 0.3s ease;
+        }
+        .github-button:hover {
+            background-color: #2980b9;
+        }
+        .language-template-title {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 15px;
+            font-weight: bold;
+            font-size: 1.2em;
+        }
+    </style>
+</head>
+<body>
+    <h1 class="main-title">Pollen Alert Germany</h1>
+
+    <div class="project-description">
+        <p>A multilingual pollen concentration alert system for Germany, providing real-time pollen forecasts in English, German, and Chinese. Automatically scrapes data from wetteronline.de and sends personalized email notifications.</p>
+        <a href="https://github.com/jumpjumptiger007/pollen-alert-germany" class="github-button" target="_blank">View Project on GitHub</a>
+    </div>
+
+    <div class="language-template-title">⬇️ Here are the multilingual email templates available ⬇️</template></div>
+
+    <!-- English Template -->
+    <div class="language-template-title">English Template</div>
+    <div class="container">
+        <div class="header">
+            <h1>Pollen Concentration Forecast for Berlin</h1>
+        </div>
+        <p class="date">Date: 2024-03-20</p>
+        
+        <table>
+            <tr>
+                <th>German Pollen Type</th>
+                <th>English Name</th>
+                <th>Concentration Level</th>
+            </tr>
+            <tr>
+                <td>Birke</td>
+                <td>Birch</td>
+                <td class="none">✅ None (0)</td>
+            </tr>
+            <tr>
+                <td>Erle</td>
+                <td>Alder</td>
+                <td class="low">⚠️ Low (1)</td>
+            </tr>
+            <tr>
+                <td>Pappel</td>
+                <td>Poplar</td>
+                <td class="medium">🟠 Medium (2)</td>
+            </tr>
+            <tr>
+                <td>Ulme</td>
+                <td>Elm</td>
+                <td class="high">🔴 High (3)</td>
+            </tr>
+        </table>
+        
+        <p>Stay healthy!</p>
+        
+        <div class="footer">
+            <p>This email is generated by an automated system. Please do not reply.</p>
+            <p>Data Source: wetteronline.de</p>
+        </div>
+    </div>
+
+    <!-- German Template -->
+    <div class="language-template-title">German Template</div>
+    <div class="language-section container">
+        <div class="header">
+            <h1>Pollenkonzentrationsprognose für Berlin</h1>
+        </div>
+        <p class="date">Datum: 2024-03-20</p>
+        
+        <table>
+            <tr>
+                <th>Pollentyp</th>
+                <th>Englischer Name</th>
+                <th>Konzentrationsniveau</th>
+            </tr>
+            <tr>
+                <td>Birke</td>
+                <td>Birch</td>
+                <td class="none">✅ Keine (0)</td>
+            </tr>
+            <tr>
+                <td>Erle</td>
+                <td>Alder</td>
+                <td class="low">⚠️ Gering (1)</td>
+            </tr>
+            <tr>
+                <td>Pappel</td>
+                <td>Poplar</td>
+                <td class="medium">🟠 Mittel (2)</td>
+            </tr>
+            <tr>
+                <td>Ulme</td>
+                <td>Elm</td>
+                <td class="high">🔴 Stark (3)</td>
+            </tr>
+        </table>
+        
+        <p>Bleiben Sie gesund!</p>
+        
+        <div class="footer">
+            <p>Diese E-Mail wird von einem automatisierten System generiert. Bitte antworten Sie nicht.</p>
+            <p>Datenquelle: wetteronline.de</p>
+        </div>
+    </div>
+
+    <!-- Chinese Template -->
+    <div class="language-template-title">Chinese Template</div>
+    <div class="language-section container">
+        <div class="header">
+            <h1>柏林地区花粉浓度预报</h1>
+        </div>
+        <p class="date">日期: 2024-03-20</p>
+        
+        <table>
+            <tr>
+                <th>花粉类型</th>
+                <th>中文名称</th>
+                <th>浓度等级</th>
+            </tr>
+            <tr>
+                <td>Birke</td>
+                <td>桦树</td>
+                <td class="none">✅ 无 (0)</td>
+            </tr>
+            <tr>
+                <td>Erle</td>
+                <td>桤木</td>
+                <td class="low">⚠️ 弱 (1)</td>
+            </tr>
+            <tr>
+                <td>Pappel</td>
+                <td>杨树</td>
+                <td class="medium">🟠 中 (2)</td>
+            </tr>
+            <tr>
+                <td>Ulme</td>
+                <td>榆树</td>
+                <td class="high">🔴 强 (3)</td>
+            </tr>
+        </table>
+        
+        <p>祝您健康每一天！</p>
+        
+        <div class="footer">
+            <p>此邮件由自动系统生成，请勿回复。</p>
+            <p>数据来源: wetteronline.de</p>
+        </div>
+    </div>
+
+    <footer class="page-footer">
+        <p>© 2025 <a href="https://yliu.tech/" class="text-blue-600 hover:underline">Yiqiang Adrian Liu</a>. All rights reserved. View the full project on <a href="https://github.com/jumpjumptiger007/pollen-alert-germany" class="text-blue-600 hover:underline">GitHub</a></p>
+    </footer>
+</body>
+</html>
