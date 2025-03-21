@@ -35,27 +35,23 @@ params:
     profileMode:
           enabled: true
           title: Yiqiang Adrian Liu
-          subtitle: "I am a computer engineer with expertise in software development, computational methods, and data-driven problem-solving. With a strong foundation in programming and system design, I specialize in building scalable digital solutions and optimizing workflows through efficient code. Passionate about technology and innovation, I leverage my knowledge to create impactful engineering solutions. Fluent in multiple languages, I enjoy collaborating in global environments to drive technical excellence."
+          subtitle: "I have a deep passion for coding and enjoy turning ideas into real projects. Whether it’s exploring new programming languages, building creative applications, or solving interesting problems, I love the process of learning and improving through hands-on development. I’m always excited to experiment with new technologies and contribute to meaningful projects. Check out my GitHub to see what I’ve been working on!"
           imageUrl: "picture.jpeg"
           imageWidth: 160
           imageHeight: 160
           buttons:
-            - name: Download Resume
-              url: cv.pdf
+            - name: View My Projects
+              url: https://github.com/jumpjumptiger007
               style: primary
             - name: Contact Me
               url: mailto:contact@yliu.tech
               style: primary
 
     socialIcons:
-        - name: CV
-          url: cv.pdf
         - name: Email
           url: mailto:contact@yliu.tech
         - name: GitHub
           url: https://github.com/jumpjumptiger007
-        - name: LinkedIn
-          url: https://www.linkedin.com/in/adrian-liu-abovea
 
 
     assets:
